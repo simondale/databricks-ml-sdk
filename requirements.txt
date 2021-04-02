@@ -1,0 +1,12 @@
+python-dotenv
+databricks-cli
+databricks-connect
+flake8
+pylint
+pydocstyle
+pytest-cov
+black
+mlflow
+sklearn
+seaborn
+msal
