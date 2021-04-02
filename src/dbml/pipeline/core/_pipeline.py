@@ -38,6 +38,7 @@ class Pipeline:
             "\n",
         ]
         lines = []
+        libraries = set([])
         for step in self._steps:
             source = os.path.join(step.source_directory, step.script_name)
             with open(source, "r") as f:
@@ -47,10 +48,11 @@ class Pipeline:
                 lines.append("\n")
                 lines.append("# COMMAND ----------\n")
                 lines.append("\n")
-            step.runconfig.environment.install_libraries(step.compute_target)
+            libraries |= set(step.runconfig.environment.get_libraries())
 
         self._header = header
         self._lines = lines
+        self._libraries = libraries
 
     def submit(self, experiment_name) -> PipelineRun:
         workspace_client = WorkspaceApi(self._workspace._client)
@@ -88,6 +90,8 @@ class Pipeline:
             "existing_cluster_id": cluster_id,
             "notebook_task": {"notebook_path": path},
         }
+        if len(self._libraries) > 0:
+            json["libraries"] = [{"pypi": {"package": p}} for p in self._libraries]
 
         rsp = self._runs.submit_run(json)
         return PipelineRun(

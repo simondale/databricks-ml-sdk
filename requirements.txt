@@ -10,3 +10,4 @@ mlflow
 sklearn
 seaborn
 msal
+azure-identity==1.5.0
